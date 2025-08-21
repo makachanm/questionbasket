@@ -90,7 +90,7 @@ uses int
 
 ### Get Answered Questions
 ```
- GET /qustion?qid={QID}
+ GET /qustion/{QID}
 ```
 return recent 20 questions.
 
