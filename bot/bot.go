@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
-	"net/url"
 	"strings"
 )
 
@@ -91,19 +89,16 @@ func (mb MastodonBot) SendMessage(aid string, isnsfw bool, content string, visib
 	}
 
 	turl := fmt.Sprintf("https://%s/api/v1/statuses", mb.instance_url)
-	furl, uerr := url.Parse(turl)
-	if uerr != nil {
-		return uerr
+
+	req, err := http.NewRequest(http.MethodPost, turl, bytes.NewBuffer(data))
+	if err != nil {
+		return err
 	}
 
-	var req http.Request = http.Request{}
-	req.Method = http.MethodPost
-	req.URL = furl
-	req.Body = io.NopCloser(bytes.NewBuffer(data))
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", mb.token))
 	req.Header.Set("Content-Type", "application/json")
 
-	_, err := http.DefaultClient.Do(&req)
+	_, err = http.DefaultClient.Do(req)
 	if err != nil {
 		return err
 	}
