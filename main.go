@@ -32,7 +32,12 @@ func main() {
 	APIServer := api.NewAPI()
 	APIServer.RegisterPath()
 
+	// Get MUX from router and register file server handler
+	mux := APIServer.Router.GetMUX()
+	fs := http.FileServer(http.Dir("./public"))
+	mux.Handle("/", fs)
+
 	//must be replaced to Certified lisnter
 	fmt.Println("READY")
-	http.ListenAndServe(":3000", APIServer.Router.GetMUX())
+	http.ListenAndServe(":3000", mux)
 }
